@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html>
+    <head>
+	<link rel="stylesheet" type="text/css" href="bin.css">
+	<script src="ipcalc.js"></script>
+	<meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+	<meta charset="utf-8">
+	<link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" integrity="sha384-pdapHxIh7EYuwy6K7iE41uXVxGCXY0sAjBzaElYGJUrzwodck3Lx6IE2lA0rFREo" crossorigin="anonymous">
+	<link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css" integrity="sha384-aUGj/X2zp5rLCbBxumKTCw2Z50WgIr1vs/PFN4praOTvYXWlVyh2UtNUU0KAUhAX" crossorigin="anonymous">
+	<script src="https://code.jquery.com/jquery-2.1.4.min.js" integrity="sha384-R4/ztc4ZlRqWjqIuvf6RX5yb/v90qNGx6fS48N0tRxiGkqveZETq72KgDVJCp2TC" crossorigin="anonymous"></script>
+	<title>IPv4 Address Explorer</title>
+    </head>
+
+    <body>
+	<header><h1>IPv4 Address Explorer</h1></header>
+	<script>
+	 function $(id) { return document.getElementById(id); };
+
+	 function highlight_net(binstr,prefix) {
+	     /* highlights characters in binstr according to prefix
+		(assumed to be a prefix length)
+	      */
+	     b = binstr.split("");
+	     out = b.map(function(bit,idx) {
+		 if((idx != 31) && ((idx+1) % 8 == 0)) {
+		     dot = ".";
+		 }
+		 else {
+		     dot = "";
+		 }
+		 if(idx < prefix) {
+		     return("<span class='highlight'>" + bit + "</span>" + dot);
+		 }
+		 else{
+		     return(bit + dot);
+		 }
+	     }).join("");
+	     return(out);
+	 }
+
+	 function explore() {
+	     var input_array = [$("octet-3"), $("octet-2"), $("octet-1"), $("octet-0")];
+	     var output_array = [$("octet-3-b"), $("octet-2-b"), $("octet-1-b"), $("octet-0-b")];
+	     var prefix = $("prefix").value;
+	     var ip_add = input_array.map(function(oct) {
+		 return(oct.value);
+	     }).join(".") + "/" + prefix;
+
+	     ip = new ipa.Address4(ip_add);
+	     ip_bits = ip.getBitsBase2();
+	     out_bits = highlight_net(ip_bits,prefix);
+	     console.log(out_bits);
+	     out_octets = out_bits.split(".");
+	     out_octets.map(function(oct,idx){
+		 output_array[idx].innerHTML = oct;
+		 return;
+	     });
+
+	     function pad_bits(s) {
+		 /* prepends string s with n-s.length 0's*/
+		 return("0".repeat(32 - s.length) + s);
+	     }
+
+	     function dot_bin(s) {
+		 /* returns a dotted binary version of s */
+		 return(s.match(/.{1,3}/g).join("."));
+	     }
+
+	     function bin_to_dot_dec(s) {
+		 /* returns a dotted decimal representation form
+		    of input dotted binary string s.
+		  */
+		 s = dot_bin(s);
+		 var b = s.split(".");
+		 d = b.map(function(oct, idx) {
+		     return(parseInt(oct,2).toString())
+		 });
+		 return(d.join("."));
+	     }
+	     /* ip-address.js calls the network address the first
+	        or start address
+	      */
+	     net_dec = ip.startAddress().address;
+	     net_bits = ip.startAddress().getBitsBase2();
+
+	     /* Get first address from network address */
+	     first_int = parseInt(net_bits,2)+1;
+	     first_bits = pad_bits(first_int.toString(2));
+	     first_dec = bin_to_dot_dec(first_bits);
+
+	     /* Get the broadcast address ip-address.js calls this the
+		last address.
+	      */
+	     bcast_dec = ip.endAddress().address;
+	     bcast_bits = ip.endAddress().getBitsBase2();
+
+	     /* Get the last usable address from the broacast address */
+	     last_int = parseInt(bcast_bits,2)-1;
+	     last_bits = pad_bits(last_int.toString(2));
+	     last_dec = bin_to_dot_dec(last_bits);
+
+
+	     var tmpl = $("ipv4-address").content.cloneNode(true);
+	     tmpl.querySelector(".description").innerText = "Network Address";
+	     tmpl.querySelector(".dotted-decimal").innerText = net_dec;
+	     tmpl.querySelector(".dotted-binary").innerHTML = highlight_net(net_bits,prefix);
+	     tmpl.querySelector(".comment").innerText = "Host bits are zero in the net address."
+	     $("main-container").appendChild(tmpl);
+
+	     var tmpl = $("ipv4-address").content.cloneNode(true);
+	     tmpl.querySelector(".description").innerText = "First usable address";
+	     tmpl.querySelector(".dotted-decimal").innerText = first_dec;
+	     tmpl.querySelector(".dotted-binary").innerHTML = highlight_net(first_bits,prefix);
+	     tmpl.querySelector(".comment").innerText = "Equal to the network address plus 1."
+	     $("main-container").appendChild(tmpl);
+
+	     var tmpl = $("ipv4-address").content.cloneNode(true);
+	     tmpl.querySelector(".description").innerText = "Last usable address";
+	     tmpl.querySelector(".dotted-decimal").innerText = last_dec;
+	     tmpl.querySelector(".dotted-binary").innerHTML = highlight_net(last_bits,prefix);
+	     tmpl.querySelector(".comment").innerText = "Equal to the broadcast address minus 1."
+	     $("main-container").appendChild(tmpl);
+
+	     var tmpl = $("ipv4-address").content.cloneNode(true);
+	     tmpl.querySelector(".description").innerText = "Broadcast address";
+	     tmpl.querySelector(".dotted-decimal").innerText = bcast_dec;
+	     tmpl.querySelector(".dotted-binary").innerHTML = highlight_net(bcast_bits,prefix);
+	     tmpl.querySelector(".comment").innerText = "All host bits are 1."
+	     $("main-container").appendChild(tmpl);
+
+	 }
+
+	</script>
+	<template id="ipv4-address">
+	    <table class="table">
+		<tr class="success"><td colspan="2"><span class="description"></span></td></tr>
+		<tr><td class="active">Dotted Decimal</td><td><span class="dotted-decimal"></span></td></tr>
+		<tr><td class="active">Dotted Binary</td><td><span class="dotted-binary"></span></td></tr>
+		<tr class="info"><td colspan="2"><span class="comment"></span></td></tr>
+	    </table>
+	</template>
+	<div class="container" id="main-container">
+	    <h4>Dotted Decimal</h4>
+
+	    <!-- Bootstrap form -->
+	    <form class="form-inline">
+
+		<div class="form-group">
+		    <label class="sr-only" for="oct-3">Octet 3</label>
+		    <input type="number" class="form-control" id="octet-3" placeholder="192">
+		</div>
+		<div class="form-group">
+		    <label class="sr-only" for="oct-2">Octet 2</label>
+		    <input type="number" class="form-control" id="octet-2" placeholder="168">
+		</div>
+		<div class="form-group">
+		    <label class="sr-only" for="oct-1">Octet 1</label>
+		    <input type="number" class="form-control" id="octet-1" placeholder="0">
+		</div>
+		<div class="form-group">
+		    <label class="sr-only" for="oct-0">Octet 0</label>
+		    <input type="number" class="form-control" id="octet-0" placeholder="75">
+		</div>
+		/
+		<div class="form-group">
+		    <label class="sr-only" for="prefix">Prefix</label>
+		    <input type="number" class="form-control" id="prefix" placeholder="24">
+		</div>
+
+	    </form>
+	    <!-- <input type="number" id="octet-3" min="0" max="255" value=192> .
+		 <input type="number" id="octet-2" min="0" max="255" value=168> .
+		 <input type="number" id="octet-1" min="0" max="255" value=0> .
+		 <input type="number" id="octet-0" min="0" max="255" value=1>/
+		 <input type="number" id="prefix" min="0" max="24" value="24"><br> -->
+	<h4>Binary</h4>
+	<div class="mono">
+	<span id="octet-3-b"></span> .
+	<span id="octet-2-b"></span> .
+	<span id="octet-1-b"></span> .
+	<span id="octet-0-b"></span><br>
+	</div>
+	<p><button class="form-control btn btn-primary" onclick="explore();">Explore!</button></p>
+	<p><button class="form-control btn btn-warning" onclick="window.location.reload()">Reset</button></p>
+	<!-- <input type="button" name="submit" value="Submit" onclick="explore();">
+	     <input type="button" name="reload" value="Reset" onclick="window.location.reload()"><br> -->
+
+
+	</div>
+    </body>
+
+</html>

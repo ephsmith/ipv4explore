@@ -1,0 +1,69 @@
+table {
+    border-collapse: collapse;
+}
+
+table, th, td {
+    border: 1px solid black;
+}
+
+input[type='number'] {
+    -moz-appearance: textfield;
+    font-family: "Lucida Console", monospace;
+    font-size: 1em;
+    text-align: center;
+    width: 5em;
+
+}
+
+#number {
+    width: 8em;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+}
+
+.highlight {
+  background-color: #ffffcc;
+}
+
+.mono, .dotted-binary {
+    font-family: "Lucida Console", monospace;
+}
+
+body {
+    padding: 0 15px;
+    margin-bottom: 100px;
+}
+a {
+    cursor: pointer;
+}
+.container {
+    padding: 0;
+}
+@media (min-width: 768px) {
+    .container {
+	max-width: 770px;
+    }
+}
+
+header {
+    margin-top: 25px;
+    text-align: center;
+}
+header a {
+    color: black;
+}
+header a:hover {
+    color: black;
+    cursor: default;
+    text-decoration: none;
+}
+header a:focus {
+    color: black;
+    text-decoration: none;
+}
+h2 {
+    border-bottom: 1px solid #ccc;
+}
