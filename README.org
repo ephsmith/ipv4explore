@@ -1,0 +1,16 @@
+#+OPTIONS: num:nil toc:nil
+#+AUTHOR: Forrest A. Smith
+#+TITLE: README
+* Description
+IPv4 Explorer is a simple, clean web-based IPv4 address calculator. The tool currently reports the following for /unicast/ addresses:
+
+- dotted binary representations for all addresses
+  - network (routing prefix) bits are highlighted
+- Network address
+- Broadcast address
+- first and last usable addresses
+
+Try the [[https://ephsmith.org/ipv4explore][live demo]]!
+
+* Credits
+IPv4 Explorer makes use of [[https://github.com/beaugunderson][Beau Gunderson's]] [[https://github.com/beaugunderson/ip-address][ip-address library]] for some address handling.
