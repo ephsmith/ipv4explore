@@ -2,9 +2,9 @@ table {
     border-collapse: collapse;
 }
 
-table, th, td {
-    border: 1px solid black;
-}
+/* table, th, td { */
+/*     border: 1px solid black; */
+/* } */
 
 input[type='number'] {
     -moz-appearance: textfield;
@@ -66,4 +66,11 @@ header a:focus {
 }
 h2 {
     border-bottom: 1px solid #ccc;
+}
+
+.slash {
+    font-size: 2em;
+    font-weight: 900;
+    margin-bottom: 0px;
+
 }
