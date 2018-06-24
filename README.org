@@ -1,6 +1,5 @@
 #+OPTIONS: num:nil toc:nil
 #+AUTHOR: Forrest A. Smith
-#+TITLE: README
 * Description
 IPv4 Explorer is a simple, clean, web-based IPv4 address calculator. The tool currently reports the following for /unicast/ addresses:
 
