@@ -4,6 +4,7 @@
     <head>
 	<link rel="stylesheet" type="text/css" href="main.css">
 	<script src="main.js"></script>
+	<script src="iana-ipv4-special-registry.js"></script>
 
 	<meta name="viewport" content="initial-scale=1.0, user-scalable=no">
 	<meta charset="utf-8">
@@ -89,6 +90,12 @@
                     <td class="active">Dotted Binary Subnet Mask</td>
                     <td><span id="user-subnet-bin" class="dotted-binary"></span></td>
 		</tr>
+		<tr>
+		    <td class="active">
+			<a target="_blank" href="https://www.iana.org/assignments/iana-ipv4-special-registry/iana-ipv4-special-registry.xhtml">
+			    IANA Special Registry Information</a></td>
+		    <td><span id="iana-data" class="mono"></span></td>
+		</tr>
 
 
             </table>
@@ -105,12 +112,15 @@
 
             <h4>Output Summary</h4>
             <div id="output-container"></div>
+
+	    <!-- Footer -->
             <footer>
 		<ul>
                     <li class="list-group-item">Created by Forrest Smith</li>
-		    <li class="list-group-item"><a href="https://github.com/ephsmith/ipv4explore">View on GitHub</a>.</li>
-                    <li class="list-group-item">Utilizes <a href="https://github.com/beaugunderson">@beaugunderson</a>'s <a href="https://github.com/beaugunderson/ip-address">ip-address</a> library for address validation.
+		    <li class="list-group-item"><a target="_blank" href="https://github.com/ephsmith/ipv4explore">View on GitHub</a>.</li>
+                    <li class="list-group-item">Utilizes <a target="_blank" href="https://github.com/beaugunderson">@beaugunderson</a>'s <a target="_blank" href="https://github.com/beaugunderson/ip-address">ip-address</a> library for address validation.
                     </li>
+		    <li class="list-group-item">References <a target="_blank" href="https://www.iana.org/assignments/iana-ipv4-special-registry/iana-ipv4-special-registry.xhtml">IANA Special Registry Information</a></li>
 		</ul>
             </footer>
 	</div>
@@ -123,6 +133,7 @@
                  $("#user-bin").empty();
                  $("#user-subnet").empty();
 		 $("#user-subnet-bin").empty();
+		 $('#iana-data').empty();
                  explore();
              });
              $('form').on('reset', function(e) {
@@ -131,8 +142,20 @@
                  $("#user-bin").empty();
                  $("#user-subnet").empty();
 		 $("#user-subnet-bin").empty();
+		 $('#iana-data').empty();
              });
          });
+
+	 function find_super(data, ip) {
+	     var flag = false;
+	     var ipt = new ipa.Address4(data['Address Block'][0]);
+	     flag = ip.isInSubnet(ipt) || flag;
+	     if (data['Address Block'].length == 2) {
+		 ipt = new ipa.Address4(data['Address Block'][1]);
+		 flag = ip.isInSubnet(ipt) || flag;
+	     }
+	     return(flag);
+	 }
 
          function highlight_net(binstr, prefix) {
              /* highlights characters in binstr according to prefix
@@ -185,73 +208,105 @@
 	 }
 
          function explore() {
-
+	     var render_additional = true;
              var input_dec = $('#input-dec')[0].value;
-             console.log("input_dec: " + input_dec);
-             ip = new ipa.Address4(input_dec);
+             var ip = new ipa.Address4(input_dec);
              var prefix = ip.subnetMask;
-
-             console.log(ip);
-             ip_bits = ip.getBitsBase2();
-             out_bits = highlight_net(ip_bits, prefix);
-             console.log(out_bits);
-             $('#user-dec')[0].innerText = ip.addressMinusSuffix;
-             $('#user-bin')[0].innerHTML = out_bits;
-             $('#user-subnet')[0].innerText = bin_to_dot_dec(prefix_mask(prefix));
-	     $('#user-subnet-bin')[0].innerHTML = highlight_net(prefix_mask(prefix),prefix);
-
+             var ip_bits = ip.getBitsBase2();
+             var out_bits = highlight_net(ip_bits, prefix);
 
 	     /* ip-address.js calls the network address the first
 		or start address
 	      */
-	     net_dec = ip.startAddress().address;
-	     net_bits = ip.startAddress().getBitsBase2();
+	     var net_dec = ip.startAddress().address;
+	     var net_bits = ip.startAddress().getBitsBase2();
 
-	     /* Get first address from network address */
-	     first_int = parseInt(net_bits, 2) + 1;
-	     first_bits = pad_bits(first_int.toString(2));
-	     first_dec = bin_to_dot_dec(first_bits);
+	     /* Find the parent supernet in the IANA data */
+	     var supernet = iana_data.filter(function(data) { return find_super(data,ip)});
+	     if (supernet.length == 2) {
+		 /* The only overlapping blocks in the data are for 192.168.0.0/16 and
+		    the NAT64 discovery addresses
+		  */
+		 supernet = supernet[1];
+	     }
+	     else {
+		 supernet = supernet[0];
+	     }
 
-	     /* Get the broadcast address ip-address.js calls this the
-		last address.
+	     s = "";
+	     console.log(supernet.length);
+	     for(x in supernet) {
+		 s += x + " : " + supernet[x] + "<br>";
+	     }
+
+	     /* Rendering Section */
+	     $('#iana-data')[0].innerHTML = s;
+	     $('#user-dec')[0].innerText = ip.addressMinusSuffix;
+	     $('#user-bin')[0].innerHTML = out_bits;
+
+	     /* Handle special cases where broadcast, network, first and last
+		aren't applicable.
 	      */
-	     bcast_dec = ip.endAddress().address;
-	     bcast_bits = ip.endAddress().getBitsBase2();
+	     if (supernet.Source == 'False') { render_additional = false}
 
-	     /* Get the last usable address from the broacast address */
-	     last_int = parseInt(bcast_bits, 2) - 1;
-	     last_bits = pad_bits(last_int.toString(2));
-	     last_dec = bin_to_dot_dec(last_bits);
 
-	     var tmpl = $("#ipv4-address")[0].content.cloneNode(true);
-	     tmpl.querySelector(".description").innerText = "Network Address";
-	     tmpl.querySelector(".dotted-decimal").innerText = net_dec;
-	     tmpl.querySelector(".dotted-binary").innerHTML = highlight_net(net_bits, prefix);
-	     tmpl.querySelector(".comment").innerText = "All host bits are zero."
-	     $("#output-container")[0].appendChild(tmpl);
+	     if (render_additional) {
 
-	     var tmpl = $("#ipv4-address")[0].content.cloneNode(true);
-	     tmpl.querySelector(".description").innerText = "First usable address";
-	     tmpl.querySelector(".dotted-decimal").innerText = first_dec;
-	     tmpl.querySelector(".dotted-binary").innerHTML = highlight_net(first_bits, prefix);
-	     tmpl.querySelector(".comment").innerText = "Equal to the network address plus 1."
-	     $("#output-container")[0].appendChild(tmpl);
+		 $('#user-subnet')[0].innerText = bin_to_dot_dec(prefix_mask(prefix));
+		 $('#user-subnet-bin')[0].innerHTML = highlight_net(prefix_mask(prefix),prefix);
 
-	     var tmpl = $("#ipv4-address")[0].content.cloneNode(true);
-	     tmpl.querySelector(".description").innerText = "Last usable address";
-	     tmpl.querySelector(".dotted-decimal").innerText = last_dec;
-	     tmpl.querySelector(".dotted-binary").innerHTML = highlight_net(last_bits, prefix);
-	     tmpl.querySelector(".comment").innerText = "Equal to the broadcast address minus 1."
-	     $("#output-container")[0].appendChild(tmpl);
+		 /* Get first address from network address */
+		 first_int = parseInt(net_bits, 2) + 1;
+		 first_bits = pad_bits(first_int.toString(2));
+		 first_dec = bin_to_dot_dec(first_bits);
 
-	     var tmpl = $("#ipv4-address")[0].content.cloneNode(true);
-	     tmpl.querySelector(".description").innerText = "Broadcast address";
-	     tmpl.querySelector(".dotted-decimal").innerText = bcast_dec;
-	     tmpl.querySelector(".dotted-binary").innerHTML = highlight_net(bcast_bits, prefix);
-	     tmpl.querySelector(".comment").innerText = "All host bits are 1."
-	     $("#output-container")[0].appendChild(tmpl);
+		 /* Get the broadcast address ip-address.js calls this the
+		    last address.
+		  */
+		 bcast_dec = ip.endAddress().address;
+		 bcast_bits = ip.endAddress().getBitsBase2();
 
+		 /* Get the last usable address from the broacast address */
+		 last_int = parseInt(bcast_bits, 2) - 1;
+		 last_bits = pad_bits(last_int.toString(2));
+		 last_dec = bin_to_dot_dec(last_bits);
+
+		 var tmpl = $("#ipv4-address")[0].content.cloneNode(true);
+		 tmpl.querySelector(".description").innerText = "Network Address";
+		 tmpl.querySelector(".dotted-decimal").innerText = net_dec;
+		 tmpl.querySelector(".dotted-binary").innerHTML = highlight_net(net_bits, prefix);
+		 tmpl.querySelector(".comment").innerText = "All host bits are zero."
+		 $("#output-container")[0].appendChild(tmpl);
+
+		 var tmpl = $("#ipv4-address")[0].content.cloneNode(true);
+		 tmpl.querySelector(".description").innerText = "First usable address";
+		 tmpl.querySelector(".dotted-decimal").innerText = first_dec;
+		 tmpl.querySelector(".dotted-binary").innerHTML = highlight_net(first_bits, prefix);
+		 tmpl.querySelector(".comment").innerText = "Equal to the network address plus 1."
+		 $("#output-container")[0].appendChild(tmpl);
+
+		 var tmpl = $("#ipv4-address")[0].content.cloneNode(true);
+		 tmpl.querySelector(".description").innerText = "Last usable address";
+		 tmpl.querySelector(".dotted-decimal").innerText = last_dec;
+		 tmpl.querySelector(".dotted-binary").innerHTML = highlight_net(last_bits, prefix);
+		 tmpl.querySelector(".comment").innerText = "Equal to the broadcast address minus 1."
+		 $("#output-container")[0].appendChild(tmpl);
+
+		 var tmpl = $("#ipv4-address")[0].content.cloneNode(true);
+		 tmpl.querySelector(".description").innerText = "Broadcast address";
+		 tmpl.querySelector(".dotted-decimal").innerText = bcast_dec;
+		 tmpl.querySelector(".dotted-binary").innerHTML = highlight_net(bcast_bits, prefix);
+		 tmpl.querySelector(".comment").innerText = "All host bits are 1."
+		 $("#output-container")[0].appendChild(tmpl);
+	     }
+	     else {
+		 $('#user-subnet')[0].innerText = "N/A";
+		 $('#user-subnet-bin')[0].innerText = "N/A";
+		 $("#output-container").append("<br><em>No futher information to display here.</em><br><br>")
+	     }
          }
+
+
 
 	</script>
 

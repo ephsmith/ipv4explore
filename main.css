@@ -29,7 +29,7 @@ input::-webkit-inner-spin-button {
 }
 
 .mono, .dotted-binary {
-    font-family: "Lucida Console", monospace;
+    font-family: monospace;
 }
 
 body {
