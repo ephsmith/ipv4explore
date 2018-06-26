@@ -13,20 +13,13 @@
 	<meta name="keywords" content="ipv4,calculator,networking">
 	<meta name="author" content="Forrest Smith">
 
-	<link rel="stylesheet"
-	      href="https://netdna.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css"
-	      integrity="sha384-pdapHxIh7EYuwy6K7iE41uXVxGCXY0sAjBzaElYGJUrzwodck3Lx6IE2lA0rFREo"
-	      crossorigin="anonymous">
-	<link rel="stylesheet"
-	      href="https://netdna.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css"
-	      integrity="sha384-aUGj/X2zp5rLCbBxumKTCw2Z50WgIr1vs/PFN4praOTvYXWlVyh2UtNUU0KAUhAX"
-	      crossorigin="anonymous">
-	<script src="https://code.jquery.com/jquery-2.1.4.min.js"
-		     integrity="sha384-R4/ztc4ZlRqWjqIuvf6RX5yb/v90qNGx6fS48N0tRxiGkqveZETq72KgDVJCp2TC"
-		crossorigin="anonymous"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/1000hz-bootstrap-validator/0.11.9/validator.js"
-		integrity="sha256-UiqIqgNXwR8ChFMaD8VrY0tBUIl/soqb7msaauJWZVc="
-		crossorigin="anonymous"></script>
+		     integrity="sha256-UiqIqgNXwR8ChFMaD8VrY0tBUIl/soqb7msaauJWZVc="
+		     crossorigin="anonymous"></script>
 
 	<title>IPv4 Address Explorer</title>
     </head>
@@ -70,6 +63,15 @@
 		<input type="reset" class="btn btn-warning">
             </form>
 
+	    <h4>Summary</h4>
+	    <p>This tool reports basic information related to the input IPv4 address. It is designed for use with <em>unicast</em> addresses. The tool reports:</p>
+	    <ul>
+		<li>network, first, last, and broadcast addresses for the input address</li>
+		<li>dotted binary representations of addresses</li>
+		<li><span class="highlight">network bits are highlighted</span>, host bits are not
+	    </ul><br>
+
+	    <div class="collapse">
             <h4>Input Summary</h4>
             <table class="table">
 		<tr class="success">
@@ -100,20 +102,15 @@
 
 
             </table>
+	    </div>
             <hr>
-	    <h4>Summary</h4>
-	    <p>This tool reports basic information related to the input IPv4 address. It is designed for use with <em>unicast</em> addresses. The tool reports:</p>
-	    <ul>
-		<li>network, first, last, and broadcast addresses for the input address</li>
-		<li>dotted binary representations of addresses</li>
-		<li><span class="highlight">network bits are highlighted</span>, host bits are not
-	    </ul><br>
 
 
 
+	    <div class="collapse">
             <h4>Output Summary</h4>
             <div id="output-container"></div>
-
+	    </div>
 	    <!-- Footer -->
             <footer>
 		<ul>
@@ -136,14 +133,17 @@
 		 $("#user-subnet-bin").empty();
 		 $('#iana-data').empty();
                  explore();
+		 $('.collapse').collapse("show");
              });
              $('form').on('reset', function(e) {
+		 $('.collapse').collapse("hide");
                  $("#output-container").empty();
                  $("#user-dec").empty();
                  $("#user-bin").empty();
                  $("#user-subnet").empty();
 		 $("#user-subnet-bin").empty();
 		 $('#iana-data').empty();
+
              });
          });
 	</script>
