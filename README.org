@@ -3,11 +3,14 @@
 * Description
 IPv4 Explorer is a simple, clean, web-based IPv4 address calculator. The tool currently reports the following for /unicast/ addresses:
 
+If the input address is a valid source adress, the following information is reported. 
 - dotted binary representations for all addresses
   - network (routing prefix) bits are highlighted
 - Network address
 - Broadcast address
 - first and last usable addresses
+
+IANA special registry information is reported by searching IANA's special registry data for a supernet that contains the input address.  
 
 Try the [[https://ephsmith.org/ipv4explore][live demo]]!
 
