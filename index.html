@@ -73,86 +73,79 @@
 	    </ul><br>
 
 	    <div class="collapse">
-            <h4>Input Summary</h4>
-            <table class="table">
-		<tr class="success">
-                    <td colspan="2" class="text-center"><span style="font-weight: bold" class="description">Input Address</span></td>
-		</tr>
-		<tr>
-                    <td class="active">Dotted Decimal Address</td>
-                    <td><span id="user-dec" class="dotted-decimal"></span></td>
-		</tr>
-		<tr>
-                    <td class="active">Dotted Binary Address</td>
-                    <td><span id="user-bin" class="dotted-binary"></span></td>
-		</tr>
-		<tr>
-                    <td class="active">Dotted Decimal Subnet Mask</td>
-                    <td><span id="user-subnet" class="dotted-decimal"></span></td>
-		</tr>
-		<tr>
-                    <td class="active">Dotted Binary Subnet Mask</td>
-                    <td><span id="user-subnet-bin" class="dotted-binary"></span></td>
-		</tr>
-		<tr>
-		    <td class="active">
-			<a target="_blank" href="https://www.iana.org/assignments/iana-ipv4-special-registry/iana-ipv4-special-registry.xhtml">
-			    IANA Special Registry Information</a></td>
-		    <td><span id="iana-data" class="mono"></span></td>
-		</tr>
-
-
-            </table>
+		<h4>Input Summary</h4>
+		<table class="table">
+		    <tr class="success">
+			<td colspan="2" class="text-center"><span style="font-weight: bold" class="description">Input Address</span></td>
+		    </tr>
+		    <tr>
+			<td class="active">Dotted Decimal Address</td>
+			<td><span id="user-dec" class="dotted-decimal"></span></td>
+		    </tr>
+		    <tr>
+			<td class="active">Dotted Binary Address</td>
+			<td><span id="user-bin" class="dotted-binary"></span></td>
+		    </tr>
+		    <tr>
+			<td class="active">Dotted Decimal Subnet Mask</td>
+			<td><span id="user-subnet" class="dotted-decimal"></span></td>
+		    </tr>
+		    <tr>
+			<td class="active">Dotted Binary Subnet Mask</td>
+			<td><span id="user-subnet-bin" class="dotted-binary"></span></td>
+		    </tr>
+		    <tr>
+			<td class="active">
+			    <a target="_blank" href="https://www.iana.org/assignments/iana-ipv4-special-registry/iana-ipv4-special-registry.xhtml">IANA Special Registry Information</a></td>
+			<td><span id="iana-data" class="mono"></span></td>
+		    </tr>
+		</table>
 	    </div>
             <hr>
 
-
-
 	    <div class="collapse">
-            <h4>Output Summary</h4>
-            <div id="output-container"></div>
+		<h4>Output Summary</h4>
+		<div id="output-container"></div>
 	    </div>
-	    <!-- Footer -->
-            <footer>
-		<ul>
+
+	    <div class="row">
+		<ul class="list-group list-group-flush">
                     <li class="list-group-item">Created by Forrest Smith</li>
 		    <li class="list-group-item"><a target="_blank" href="https://github.com/ephsmith/ipv4explore">View on GitHub</a>.</li>
-                    <li class="list-group-item">Utilizes <a target="_blank" href="https://github.com/beaugunderson">@beaugunderson</a>'s <a target="_blank" href="https://github.com/beaugunderson/ip-address">ip-address</a> library for address validation.
-                    </li>
+		    <li class="list-group-item">Utilizes <a target="_blank" href="https://github.com/beaugunderson">@beaugunderson</a>'s <a target="_blank" href="https://github.com/beaugunderson/ip-address">ip-address</a> library for address validation.</li>
 		    <li class="list-group-item">References <a target="_blank" href="https://www.iana.org/assignments/iana-ipv4-special-registry/iana-ipv4-special-registry.xhtml">IANA Special Registry Information</a></li>
 		</ul>
-            </footer>
-	</div>
-	<script>
-         $(document).ready(function() {
-             $("form").submit(function(e) {
-		 if(e.isDefaultPrevented()) {
-		     return;
-		 }
-		 else {
-                     e.preventDefault();
-                     $("#output-container").empty();
-                     $("#user-dec").empty();
-                     $("#user-bin").empty();
-                     $("#user-subnet").empty();
+	    </div>
+	    <script>
+	     $(document).ready(function() {
+		 $("form").submit(function(e) {
+		     if(e.isDefaultPrevented()) {
+			 return;
+		     }
+		     else {
+			 e.preventDefault();
+			 $("#output-container").empty();
+			 $("#user-dec").empty();
+			 $("#user-bin").empty();
+			 $("#user-subnet").empty();
+			 $("#user-subnet-bin").empty();
+			 $('#iana-data').empty();
+			 explore();
+			 $('.collapse').collapse("show");
+		     }
+		 });
+		 $('form').on('reset', function(e) {
+		     $('.collapse').collapse("hide");
+		     $("#output-container").empty();
+		     $("#user-dec").empty();
+		     $("#user-bin").empty();
+		     $("#user-subnet").empty();
 		     $("#user-subnet-bin").empty();
 		     $('#iana-data').empty();
-                     explore();
-		     $('.collapse').collapse("show");
-		 }
-             });
-             $('form').on('reset', function(e) {
-		 $('.collapse').collapse("hide");
-                 $("#output-container").empty();
-                 $("#user-dec").empty();
-                 $("#user-bin").empty();
-                 $("#user-subnet").empty();
-		 $("#user-subnet-bin").empty();
-		 $('#iana-data').empty();
 
-             });
-         });
-	</script>
+		 });
+	     });
+	    </script>
 
     </body>
 
