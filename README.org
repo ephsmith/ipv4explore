@@ -1,18 +1,26 @@
 #+OPTIONS: num:nil toc:nil
 #+AUTHOR: Forrest A. Smith
 * Description
-IPv4 Explorer is a simple, clean, web-based IPv4 address calculator. The tool currently reports the following for /unicast/ addresses:
+IPv4 Explorer is a simple, clean, web-based IPv4 address
+calculator. The tool currently reports the following for valid IPv4 addresses:
 
-If the input address is a valid source adress, the following information is reported. 
+If the input address is a valid source adress, the following information is reported.
 - dotted binary representations for all addresses
   - network (routing prefix) bits are highlighted
 - Network address
 - Broadcast address
 - first and last usable addresses
 
-IANA special registry information is reported by searching IANA's special registry data for a supernet that contains the input address.  
+** Additional Notes
+- IANA special registry information is reported by searching IANA's special registry data for a supernet that contains the input address.
+- Although the tool was not designed to handle multicast addresses,
+  they are recognized.  Reference links are currently reported for
+  such cases.
 
 Try the [[https://ephsmith.org/ipv4explore][live demo]]!
 
 * Credits
-IPv4 Explorer makes use of [[https://github.com/beaugunderson][Beau Gunderson's]] [[https://github.com/beaugunderson/ip-address][ip-address library]] for some address handling.
+- IPv4 Explorer makes use of [[https://github.com/beaugunderson][Beau Gunderson's]] [[https://github.com/beaugunderson/ip-address][ip-address library]] for some address handling.
+- Data from the [[https://www.iana.org/assignments/ipv4-address-space/ipv4-address-space.xml][IANA Address Registry]] and the [[https://www.iana.org/assignments/iana-ipv4-special-registry/iana-ipv4-special-registry.xhtml][IANA Special Address
+  Registry]] are use to report additional information for some
+  addresses.
