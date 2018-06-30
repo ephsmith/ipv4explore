@@ -123,9 +123,9 @@ function explore() {
 
     /* Find the parent supernet in the IANA registry data */
     var reg_supernet = registry_data.filter(function(data) { return find_registry(data,ip)})[0];
-
-    /* Handle footnote links in the IANA data */
-    if (reg_supernet.Note.length > 0 ) {
+    if (reg_supernet.Designation == "Multicast") { render_additional = false}
+	/* Handle footnote links in the IANA data */
+	if (reg_supernet.Note.length > 0 ) {
 	var k;
 	var m = reg_supernet.Note.match(/[0-9]+/g);
 	reg_supernet.Note = '';
