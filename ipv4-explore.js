@@ -64,6 +64,7 @@ function dot_bin(s) {
     return (s.match(/.{1,8}/g).join("."));
 }
 
+
 function explore() {
     var render_additional = true;
     var input_dec = $('#input-dec')[0].value;
@@ -123,9 +124,10 @@ function explore() {
 
     /* Find the parent supernet in the IANA registry data */
     var reg_supernet = registry_data.filter(function(data) { return find_registry(data,ip)})[0];
-    if (reg_supernet.Designation == "Multicast") { render_additional = false}
-	/* Handle footnote links in the IANA data */
-	if (reg_supernet.Note.length > 0 ) {
+
+
+    /* Handle footnote links in the IANA data */
+    if (reg_supernet.Note.length > 0 ) {
 	var k;
 	var m = reg_supernet.Note.match(/[0-9]+/g);
 	reg_supernet.Note = '';
@@ -135,6 +137,16 @@ function explore() {
 	    reg_supernet.Note += m[k] + "'>[" + m[k] + "]</a>";
 	}
     }
+
+    /* Handle multicast cases */
+    if (reg_supernet.Designation == "Multicast") {
+	render_additional = false;
+	reg_supernet.Note += "<br><a target='_blank' ";
+	reg_supernet.Note += "href='https://www.iana.org/assignments/multicast-addresses/multicast-addresses.xhtml'>"
+	reg_supernet.Note += "See Multicast Tables</a>";
+    }
+
+
     registry_string = '';
     for(x in reg_supernet) {
 	registry_string += x + " : " + reg_supernet[x] + "<br>";
