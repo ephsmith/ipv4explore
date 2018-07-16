@@ -123,8 +123,9 @@ function explore() {
     }
 
     /* Find the parent supernet in the IANA registry data */
-    var reg_supernet = registry_data.filter(function(data) { return find_registry(data,ip)})[0];
-
+    var reg_supernet = Object.assign({},
+				     registry_data.filter(function(data) { return find_registry(data,ip)})[0]);
+    var note = reg_supernet.Note
 
     /* Handle footnote links in the IANA data */
     if (reg_supernet.Note.length > 0 ) {
@@ -157,7 +158,7 @@ function explore() {
     $('#iana-data')[0].innerHTML = super_string;
     $('#user-dec')[0].innerText = ip.addressMinusSuffix;
     $('#user-bin')[0].innerHTML = out_bits;
-
+    registry_string = '';
 
 
     if (render_additional) {
