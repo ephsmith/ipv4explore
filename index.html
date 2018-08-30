@@ -119,12 +119,20 @@
 		    <li class="list-group-item">References: <a target="_blank" href="https://www.iana.org/assignments/iana-ipv4-special-registry/iana-ipv4-special-registry.xhtml">IANA Special Registry Information</a> and <a target="_blank" href="https://www.iana.org/assignments/ipv4-address-space/ipv4-address-space.xml">IPv4 Address Registry</a></li>
 		</ul>
 	    </div>
-	    <script src="main.js"></script>
-	    <script src="iana-ipv4-special-registry.js"></script>
-	    <script src="iana-registry.js"></script>
-	    <script src="ipv4-explore.js"></script>
+	    <!-- <script src="main.js"></script>
+		 <script src="iana-ipv4-special-registry.js"></script>
+		 <script src="iana-registry.js"></script>
+		 <script src="ipv4-explore.js"></script> -->
 	    <script>
 	     $(document).ready(function() {
+		 $.ajaxSetup({ cache: true});
+		 $.getScript("main.js");
+		 $.getScript("iana-ipv4-special-registry.js");
+		 $.getScript("iana-registry.js");
+		 $.getScript("ipv4-explore.js");
+
+
+
 		 $("form").submit(function(e) {
 		     if(e.isDefaultPrevented()) {
 			 return;
@@ -149,10 +157,10 @@
 		     $("#user-bin").empty();
 		     $("#user-subnet").empty();
 		     $("#user-subnet-bin").empty();
-		     $('#registry-data').empty();
-		     $('#iana-data').empty();
+		 $('#registry-data').empty();
+		 $('#iana-data').empty();
 
-		 });
+	     });
 	     });
 	    </script>
 
